@@ -1,6 +1,4 @@
----@meta bitsy
-
----@module 'love'
+---@meta
 
 ---@class bitsy
 local bitsy = {}
@@ -41,7 +39,7 @@ Types.Array     = Type.new("array")       -- array
 ---@field private type bitsy.Type
 ---@field private name string
 ---@field private count integer
----@field private data
+---@field private data any
 ---@overload fun(type: bitsy.Type, name: string, count: integer, data?: any): bitsy.Array
 local Array = {}
 
@@ -198,7 +196,7 @@ SeekType.SEEK_END = 2 -- Seek relative to the end of the stream.
 ---@class bitsy.BinaryStream
 ---@field protected data love.Data
 ---@field protected offset integer
----@overload fun(data: love.Data, offset?: integer): BinaryStream
+---@overload fun(data: love.Data, offset?: integer): bitsy.BinaryStream
 local BinaryStream = {}
 
 ---Creates a new BinaryStream with data.
@@ -298,7 +296,7 @@ local BinaryWriter = {}
 ---Creates a new binary writer
 ---@param size integer The size of the data
 ---@return bitsy.BinaryWriter
-function BinaryWriter.new(size)
+function BinaryWriter.new(size) end
 
 ---Creates a new binary writer from existing data
 ---@param data love.Data The data to use
