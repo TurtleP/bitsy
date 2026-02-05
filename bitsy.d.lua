@@ -50,6 +50,7 @@ local Array = {}
 ---@param name string The name of the array.
 ---@param count integer The number of items in the array.
 ---@param data? any
+---@return bitsy.Array array
 function Array.new(type, name, count, data) end
 
 ---Gets the size of the array.
@@ -102,6 +103,7 @@ local Magic = {}
 ---@param type bitsy.Type The type of the magic field.
 ---@param name string The name of the magic field.
 ---@param value any The value of the magic field, for validation.
+---@return bitsy.Magic magic
 function Magic.new(type, name, value) end
 
 ---Gets the size of the magic value field.
@@ -125,6 +127,7 @@ local Field = {}
 ---@param type bitsy.Type The type for this field.
 ---@param name string The name of this field.
 ---@param value? # The default value
+---@return bitsy.Field field
 function Field.new(type, name, value) end
 
 ---Gets the name of the field.
@@ -201,6 +204,7 @@ local BinaryStream = {}
 ---Creates a new BinaryStream with data.
 ---@param data love.Data The data to read.
 ---@param offset? integer The offset to start at.
+---@return bitsy.BinaryStream stream
 function BinaryStream.new(data, offset) end
 
 ---Gets the data associated with this stream.
@@ -232,6 +236,7 @@ local BinaryReader = {}
 ---Creates a new BinaryReader with data.
 ---@param data love.Data The data to read.
 ---@param offset? integer The offset to start at.
+---@return bitsy.BinaryReader reader
 function BinaryReader.new(data, offset) end
 
 ---Reads an unsigned 8-bit integer from the BinaryReader.
@@ -292,10 +297,12 @@ local BinaryWriter = {}
 
 ---Creates a new binary writer
 ---@param size integer The size of the data
+---@return bitsy.BinaryWriter
 function BinaryWriter.new(size)
 
 ---Creates a new binary writer from existing data
 ---@param data love.Data The data to use
+---@return bitsy.BinaryWriter
 function BinaryWriter.from(data) end
 
 ---Write unsigned 8-bit integers into the data.
