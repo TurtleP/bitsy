@@ -5,8 +5,9 @@ local SeekType = require(path .. "seek")
 local Types = require(path .. "types")
 
 
-local BinaryWriter   = {}
-BinaryWriter.__index = BinaryWriter
+local BinaryWriter      = {}
+BinaryWriter.__index    = BinaryWriter
+BinaryWriter.__tostring = Stream.__tostring
 
 function BinaryWriter.new(size)
     Stream.new(BinaryWriter, love.data.newByteData(size), 0)
@@ -104,9 +105,9 @@ local Writers = {
 }
 
 function BinaryWriter:write(type, ...)
-    local reader = Writers[type]
-    assert(reader ~= nil, ("Writing '%s' is not supported"):format(type))
-    return reader(self, ...)
+    local writer = Writers[type]
+    assert(writer ~= nil, ("Writing '%s' is not supported"):format(type))
+    return writer(self, ...)
 end
 
 return setmetatable(BinaryWriter, {

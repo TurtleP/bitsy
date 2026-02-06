@@ -2,7 +2,19 @@ local path = (...):gsub("struct", "")
 local Types = require(path .. "types")
 
 local Struct = {}
-Struct.__index = Struct
+Struct.__index = function(self, key)
+    if Struct[key] then
+        return Struct[key]
+    end
+    local member = self.members[key]
+    if member then
+        if member:getType() == Types.Array then
+            return member
+        end
+        return member.value
+    end
+    return nil
+end
 
 function Struct.new(name, fields)
     local size, members = 0, {}

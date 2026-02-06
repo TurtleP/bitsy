@@ -30,10 +30,10 @@ local Field = bitsy.Field
 local Struct = bitsy.Struct
 
 local Player = Struct.new("Player", {
-    Field.new(T.UInt32, "id"),
-    Field.new(T.Float,  "x"),
-    Field.new(T.Float,  "y"),
-    Field.new(T.UInt16, "health"),
+    Field.new(Type.UInt32, "id"),
+    Field.new(Type.Float,  "x"),
+    Field.new(Type.Float,  "y"),
+    Field.new(Type.UInt16, "health"),
 })
 ```
 

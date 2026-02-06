@@ -5,12 +5,20 @@ local Types = require(path .. "types")
 local utf8 = require("utf8")
 
 
-local BinaryReader = {}
-BinaryReader.__index = BinaryReader
+local BinaryReader      = {}
+BinaryReader.__index    = BinaryReader
+BinaryReader.__tostring = Stream.__tostring
 
 function BinaryReader.new(data, offset)
-    Stream.new(BinaryReader, data, offset)
-    return setmetatable({}, BinaryReader)
+    local self = setmetatable({}, BinaryReader)
+    Stream.new(self, data, offset)
+    return self
+end
+
+function BinaryReader.open(filename, offset)
+    local self = setmetatable({}, BinaryReader)
+    Stream.new(self, love.filesystem.newFileData(filename), offset)
+    return self
 end
 
 function BinaryReader:readUInt8(count)
@@ -129,11 +137,7 @@ local Readers = {
         return string:gsub("%z", "")
     end,
     [Types.Struct] = function(self, count, s)
-        local structs = {}
-        for _ = 1, count do
-            structs[#structs + 1] = s:read(self)
-        end
-        return structs
+        return self:readStruct(count, s)
     end
 }
 

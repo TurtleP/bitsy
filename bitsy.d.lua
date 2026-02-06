@@ -150,14 +150,14 @@ function Field:read(reader) end
 
 ---@class bitsy.Struct
 ---@field private name string The name of this struct.
----@field private fields bitsy.Field[] The fields of this struct.
----@overload fun(name: string, fields: bitsy.Field[]): bitsy.Struct
+---@field private fields (bitsy.Field|bitsy.Array|bitsy.Magic)[] The fields of this struct (can include Field, Array, or Magic).
+---@overload fun(name: string, fields: (bitsy.Field|bitsy.Array|bitsy.Magic)[]): bitsy.Struct
 local Struct = {}
 
 ---Creates a new Struct
 ---@param name string The name of the struct.
----@param fields bitsy.Field[] | bitsy.Struct[]
----@return bitsy.Struct struct A new struct.
+---@param fields (bitsy.Field|bitsy.Array|bitsy.Magic)[] List of fields (Field, Array, or Magic)
+---@return bitsy.Struct A new struct
 function Struct.new(name, fields) end
 
 ---Gets the name for this struct.
@@ -237,6 +237,12 @@ local BinaryReader = {}
 ---@return bitsy.BinaryReader reader
 function BinaryReader.new(data, offset) end
 
+---Creates a new BinaryReader from a file.
+---@param filepath string The filepath to read.
+---@param offset? integer The offset to start at.
+---@return bitsy.BinaryReader reader
+function BinaryReader.open(filepath, offset) end
+
 ---Reads an unsigned 8-bit integer from the BinaryReader.
 ---@param count? integer The total number of `uint8_t` to read (default 1).
 ---@return integer | integer[] bytes The `uint8_t` read from the BinaryReader.
@@ -276,6 +282,10 @@ function BinaryReader:readDouble(count) end
 ---@param length? integer The length of the string to read.
 ---@return string value The value read from the BinaryReader.
 function BinaryReader:readString(length) end
+
+---Returns the underlying data as a string
+---@return string data The string in the data
+function BinaryReader:__tostring() end
 
 ---Reads a u16 string from the BinaryReader.
 ---@param length? integer The length of the string to read.
@@ -343,6 +353,10 @@ function BinaryWriter:writeString(value) end
 ---@param type bitsy.Type The type of data
 ---@param ... integer | number| string The data to write
 function BinaryWriter:write(type, ...) end
+
+---Returns the underlying data as a string
+---@return string data The string in the data
+function BinaryWriter:__tostring() end
 
 bitsy.Array = Array
 bitsy.Field = Field
