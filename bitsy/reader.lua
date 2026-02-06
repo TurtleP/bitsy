@@ -78,6 +78,7 @@ function BinaryReader:readDouble(count)
 end
 
 function BinaryReader:readString(length)
+    length = length or 1
     local s = self.data:getString(self.offset, length)
     self.offset = self.offset + length
     return s
@@ -95,6 +96,6 @@ function BinaryReader:peek(type, count)
 end
 
 return setmetatable(BinaryReader, {
-    __call = function(_, data) return BinaryReader.new(data) end,
+    __call = function (_, data) return BinaryReader.new(data) end,
     __index = Stream
 })
