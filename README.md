@@ -25,38 +25,34 @@ local bitsy = require("bitsy")
 ## Defining a Struct
 
 ```lua
-local Type = bitsy.Types
-local Field = bitsy.Field
-local Struct = bitsy.Struct
-
-local Player = Struct.new("Player", {
-    Field.new(Type.UInt32, "id"),
-    Field.new(Type.Float,  "x"),
-    Field.new(Type.Float,  "y"),
-    Field.new(Type.UInt16, "health"),
+local PlayerStruct = bitsy.Struct("Player", {
+    bitsy.Field("name", bitsy.Array(bitsy.Type.Char, 256)),
+    bitsy.Field("rank", bitsy.Type.UInt8),
+    bitsy.Field("score", bitsy.Type.UInt32)
 })
 ```
 
 ## Reading binary data
 
 ```lua
-local data = love.filesystem.newFileData("player.bin")
-local reader = bitsy.Reader(data)
+-- Use bitsy.Reader(data) for existing love.Data!
+local reader = bitsy.Reader.open("player.bin")
 
-local player = Player:default():read(reader)
-print(player:get("health"):getValue())
+local player = PlayerStruct:read(reader)
+print(player.name, player.rank, player.score)
+--> "SuperCoolName" 1 42069
 ```
 
 ## Writing binary data
 
 ```lua
-local writer = bitsy.Writer(Player:getSize())
-
-writer:writeUInt32(1)
-writer:writeFloat(10.0, 5.0)
-writer:writeUInt16(100)
+--- Use bitsy.Writer.from(data) for existing love.Data!
+local writer = bitsy.Writer(PlayerStruct:getSize())
+--- Each table index represents the field in the Struct.
+PlayerStruct:write(writer, { "SuperCoolPerson", 100, 0 })
 
 love.filesystem.write("player.bin", writer:getData())
+--> "SuperCoolPerson" 100 0
 ```
 
 ## Documentation & Editor Support

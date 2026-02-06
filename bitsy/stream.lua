@@ -22,6 +22,7 @@ function BinaryStream:getOffset()
 end
 
 function BinaryStream:seek(offset, whence)
+    assert(offset >= 0, "negative seek")
     if whence == SeekType.SEEK_CUR then
         self.offset = self.offset + offset
     elseif whence == SeekType.SEEK_SET then
@@ -37,9 +38,5 @@ function BinaryStream:__tostring()
 end
 
 return setmetatable(BinaryStream, {
-    __call = function(_, data, offset)
-        local self = setmetatable({}, BinaryStream)
-        BinaryStream.new(self, data, offset)
-        return self
-    end
+    __call = function(_, data, offset) return BinaryStream.new(data, offset) end
 })

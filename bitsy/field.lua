@@ -1,51 +1,30 @@
 local path = (...):gsub("field", "")
-local Types = require(path .. "types")
-
-local utf8 = require("utf8")
+local DataType = require(path .. "datatype")
 
 local Field = {}
 Field.__index = Field
 
-function Field.new(type, name, value)
-    local size = type ~= Types.Struct and type:getSize() or value:getSize()
-    return setmetatable({ type = type, name = name or "unnamed", size = size, value = value }, Field)
-end
-
-function Field:__tostring()
-    return ("<Field %s: 0x%X>"):format(self.name, self.size)
-end
-
---- Gets the name of this Field.
---- @return string The name of the field
-function Field:getName()
-    return self.name
-end
-
---- Gets the type of this Field.
---- @return string The type of the field
-function Field:getType()
-    return self.type
-end
-
---- Gets the value in this Field.
---- @return any The value of the field
-function Field:getValue()
-    return self.value
-end
-
---- Gets the size of the Field, in bytes.
---- @return number The size of the Field
-function Field:getSize()
-    return self.size
+function Field:new(name, type)
+    local instance = DataType.new(self, name, type:getSize())
+    instance.type = type
+    return instance
 end
 
 function Field:read(reader)
-    self.value = reader:read(self.type, 1, self.value)
-    return self
+    return self.type:read(reader)
+end
+
+function Field:write(writer, value)
+    self.type:write(writer, value)
+end
+
+function Field:__tostring()
+    return ("<Field %s (%s)>"):format(self.name, self.type)
 end
 
 return setmetatable(Field, {
-    __call = function(_, type, name, value)
-        return Field.new(type, name, value)
-    end
+    __call = function(cls, ...)
+        return cls:new(...)
+    end,
+    __index = DataType
 })

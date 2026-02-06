@@ -1,73 +1,53 @@
 local path = (...):gsub("struct", "")
-local Types = require(path .. "types")
+local DataType = require(path .. "datatype")
 
 local Struct = {}
 Struct.__index = function(self, key)
     if Struct[key] then
         return Struct[key]
     end
-    local member = self.members[key]
-    if member then
-        if member:getType() == Types.Array then
-            return member
-        end
-        return member.value
+    if self.members[key] then
+        return self.members[key]
     end
-    return nil
+    return DataType.__index(self, key)
 end
 
-function Struct.new(name, fields)
+function Struct:new(name, fields)
     local size, members = 0, {}
     for _, field in ipairs(fields) do
         size = size + field:getSize()
         members[field:getName()] = field
     end
-    return setmetatable({ name = name or "unnamed", fields = fields, size = size, members = members }, Struct)
+    local instance = DataType.new(self, name, size)
+    instance.fields = fields
+    instance.members = members
+    return instance
 end
 
 function Struct:__tostring()
     return ("<Struct %s: 0x%X>"):format(self.name, self.size)
 end
 
-function Struct:getName()
-    return self.name
-end
-
-function Struct:default()
-    local fields = {}
-    for _, field in pairs(self.members) do
-        fields[#fields + 1] = field
-    end
-    return Struct(self.name, fields)
-end
-
-function Struct:get(field)
-    local member = self.members[field]
-    assert(member ~= nil, ("Field '%s' not found in Struct '%s'"):format(field, self.name))
-    if member:getType() == Types.Array then
-        return member
-    end
-    return member:getValue()
-end
-
-function Struct:getType()
-    return Types.Struct
-end
-
-function Struct:getSize()
-    return self.size
-end
-
-function Struct:read(reader, size)
-    local total_size = 0
+function Struct:read(reader)
+    local data = {}
     for _, field in ipairs(self.fields) do
-        field:read(reader)
-        total_size = total_size + field:getSize()
+        data[field:getName()] = field:read(reader)
     end
-    if size then assert(total_size == size, ("Expected size of 0x%X, got 0x%X"):format(size, total_size)) end
-    return self
+    return data
+end
+
+local log = require("log")
+
+function Struct:write(writer, values)
+    for index, field in ipairs(self.fields) do
+        if not values[index] then break end
+        field:write(writer, values[index] or 0)
+    end
 end
 
 return setmetatable(Struct, {
-    __call = function(_, name, fields) return Struct.new(name, fields) end
+    __call = function(cls, ...)
+        return cls:new(...)
+    end,
+    __index = DataType
 })

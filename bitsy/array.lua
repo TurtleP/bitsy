@@ -1,61 +1,34 @@
 local path = (...):gsub("array", "")
+local DataType = require(path .. "datatype")
 local Types = require(path .. "types")
 
 local Array = {}
 Array.__index = Array
 
-function Array.new(type, name, count, data)
+function Array:new(type, count)
+    assert(type and getmetatable(type) == DataType, "Array requires a DataType.")
     count = count or 1
-    local value = {}
-    for _ = 1, count do
-        value[#value + 1] = type:default()
-    end
-    return setmetatable({ type = type, name = name, count = count, value = value, data = data }, Array)
-end
-
-function Array:default()
-    local data = {}
-    for _ = 1, self.count do
-        data[#data + 1] = self.type:default()
-    end
-    return Array(self.type, self.name, self.count, data)
-end
-
-function Array:getName()
-    return self.name
-end
-
-function Array:getValue()
-    return self.value
-end
-
-function Array:getSize()
-    local size = (self.type ~= Types.Struct and self.type:getSize()) or self.data:getSize()
-    return size * self.count
-end
-
-function Array:getType()
-    return Types.Array
+    local size = type:getSize() * count
+    local instance = DataType.new(self, tostring(type), size)
+    instance.type = type
+    instance.count = count
+    return instance
 end
 
 function Array:read(reader)
-    self.value = reader:read(self.type, self.count, self.data)
-    return self
+    return self.type:read(reader, self.count)
 end
 
-function Array:index(i)
-    return self.value[i]
-end
-
-function Array:__eq(other)
-    if other:getType() ~= Types.Array then return false end
-    if other.count ~= self.count then return false end
-    for index = 1, self.count do
-        if other.value[index] ~= self.value[index] then
-            return false
-        end
+function Array:write(writer, ...)
+    local length = select("#", ...)
+    local value = ...
+    if type(value) == "string" then
+        -- expand with zeroes
+        local s = value .. string.rep("\0", (self.type:getSize() * self.count) - #value)
+        return writer:write(self.type, s)
     end
-    return true
+    assert(length == self.count, ("Array write requires exactly %d values, got %d."):format(self.count, length))
+    writer:write(self.type, ...)
 end
 
 function Array:__tostring()
@@ -63,7 +36,8 @@ function Array:__tostring()
 end
 
 return setmetatable(Array, {
-    __call = function(_, type, name, count, data)
-        return Array.new(type, name, count, data)
-    end
+    __call = function(cls, ...)
+        return cls:new(...)
+    end,
+    __index = DataType
 })

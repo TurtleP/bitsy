@@ -4,187 +4,152 @@
 local bitsy = {}
 
 ---Represents a field type in a binary data structure.
----@class Type
+---@class bitsy.DataType
 ---@field private name string The name of the field type.
 ---@field private size integer The size of the field type in bytes.
----@field private default any The initial default value
-local Type = {}
+---@field private read_fn? function The read function
+local DataType = {}
 
 ---Defines a new field type.
 ---@param name string The name of the field type.
 ---@param size integer The size of the field type in bytes.
----@param default any The default value for this Type.
----@return Type The new field type.
-function Type.new(name, size, default) end
+---@param read_fn? fun(reader: bitsy.BinaryReader, count: integer) The read callback
+---@param write_fn? fun(writer: bitsy.BinaryWriter, values: ...)
+---@return bitsy.DataType type The new data type.
+function DataType:new(name, size, read_fn, write_fn) end
+
+---Gets the name of this data type.
+---@return string name The name of this data type.
+function DataType:getName() end
+
+---Gets the size of this data type.
+---@return integer size The size of this data type.
+function DataType:getSize() end
+
+---Reads data from a reader.
+---@param reader bitsy.BinaryReader The reader to read from.
+---@param count integer The number of items to read.
+function DataType:read(reader, count) end
+
+---Writes data into a writer.
+---@param writer bitsy.BinaryWriter The writer to write into.
+---@param ... any The values to write.
+function DataType:write(writer, ...) end
 
 --- A type representing a type in cstdlib
----@enum bitsy.Type
-local Types     = {}
-Types.UInt8     = Type.new("uint8_t", 1)  -- uint8_t
-Types.Int8      = Type.new("int8_t", 1)   -- int8_t
-Types.UInt16    = Type.new("uint16_t", 2) -- uint16_t
-Types.Int16     = Type.new("int16_t", 2)  -- int16_t
-Types.UInt32    = Type.new("uint32_t", 4) -- uint32_t
-Types.Int32     = Type.new("int32_t", 4)  -- int32_t
-Types.Float     = Type.new("float", 4)    -- float
-Types.Double    = Type.new("double", 8)   -- double
-Types.String    = Type.new("string")      -- string
-Types.U16String = Type.new("u16string_t") -- u16_string
-Types.Struct    = Type.new("struct")      -- struct
-Types.Array     = Type.new("array")       -- array
-
+---@class bitsy.Type: bitsy.DataType
+---@field UInt8 bitsy.DataType uint8_t
+---@field Int8 bitsy.DataType int8_t
+---@field UInt16 bitsy.DataType uint16_t
+---@field Int16 bitsy.DataType int16_t
+---@field UInt32 bitsy.DataType uint32_t
+---@field Int32 bitsy.DataType int32_t
+---@field Char bitsy.DataType char
+local Type = {}
 
 ---A contiguous data field
----@class bitsy.Array
+---@class bitsy.Array: bitsy.DataType
 ---@field private type bitsy.Type
----@field private name string
 ---@field private count integer
----@field private data any
----@overload fun(type: bitsy.Type, name: string, count: integer, data?: any): bitsy.Array
+---@overload fun(type: bitsy.Type, count: integer): bitsy.Array
 local Array = {}
 
 ---Creates a new array.
 ---@param type bitsy.Type The type of array.
----@param name string The name of the array.
 ---@param count integer The number of items in the array.
----@param data? any
 ---@return bitsy.Array array
-function Array.new(type, name, count, data) end
-
----Gets the size of the array.
----@return integer size The size of the array.
-function Array:getSize() end
-
----Gets the type of the array.
----@return bitsy.Type
-function Array:getType() end
-
----Creates a clone of this array with default values.
----@return bitsy.Array
-function Array:default() end
-
----Gets the name of the array
----@return string name The name of the array.
-function Array:getName() end
-
----Gets the values in the array, as a table.
----@return table value The values in the array, as a table.
-function Array:getValue() end
+function Array:new(type, count) end
 
 ---Reads an array using a reader.
 ---@param reader bitsy.BinaryReader The reader to use.
 ---@return bitsy.Array array The array, modified
 function Array:read(reader) end
 
----Returns an value at index `i`.
----@param i integer The index to fetch.
----@return bitsy.Struct | bitsy.Type | bitsy.Array
-function Array:index(i) end
-
----Compare if two arrays are equal in contents.
----@return boolean equal Whether the arrays are equal in contents.
-function Array:__eq(other) end
+---Writes an array into a writer.
+---@param writer bitsy.BinaryWriter
+---@param ... integer | number| string
+function Array:write(writer, ...) end
 
 ---Gets the string format of the array.
 ---@return string
 function Array:__tostring() end
 
 ---A magic value field for validation
----@class bitsy.Magic
----@field private type bitsy.Type The type of the magic field.
+---@class bitsy.Magic: bitsy.DataType
+---@field private type bitsy.Array | bitsy.Type The type of the magic field.
 ---@field private name string The name of this magic field.
----@field private value any The value of the magic field, for validation.
----@overload fun(type: bitsy.Type, name: string, value: any): bitsy.Magic
+---@field private expected any The value of the magic field, for validation.
+---@overload fun(name: string, type: bitsy.Type | bitsy.Array, expected: any): bitsy.Magic
 local Magic = {}
 
 ---Creates a new magic value field.
----@param type bitsy.Type The type of the magic field.
 ---@param name string The name of the magic field.
----@param value any The value of the magic field, for validation.
+---@param type bitsy.Array | bitsy.Type The type of the magic field.
+---@param expected any The value of the magic field, for validation.
 ---@return bitsy.Magic magic
-function Magic.new(type, name, value) end
-
----Gets the size of the magic value field.
----@return integer size The size of the magic value field.
-function Magic:getSize() end
+function Magic:new(name, type, value) end
 
 ---Reads a magic value from a reader.
 ---@param reader bitsy.BinaryReader The reader to read from.
 ---@return bitsy.Magic magic The instance
 function Magic:read(reader) end
 
----@class bitsy.Field
----@field private type bitsy.Type
+---Writes a magic value into a writer.
+---@param writer bitsy.BinaryWriter The writer to write into.
+---@param value any The value to write into the magic.
+function Magic:write(writer, value) end
+
+---Gets the string format of the magic.
+---@return string format
+function Magic:__tostring() end
+
+---@class bitsy.Field: bitsy.DataType
 ---@field private name string
----@field private size integer
----@field private value bitsy.Struct | bitsy.Type
----@overload fun(type: bitsy.Type, name: string, value: any): bitsy.Field
+---@field private type bitsy.Type
+---@overload fun(name: string, type: bitsy.Type): bitsy.Field
 local Field = {}
 
 ---Creates a new Field
----@param type bitsy.Type The type for this field.
 ---@param name string The name of this field.
----@param value? # The default value
+---@param type bitsy.Type The type for this field.
 ---@return bitsy.Field field
-function Field.new(type, name, value) end
-
----Gets the name of the field.
----@return string name The name of the field.
-function Field:getName() end
-
----Gets the type of the field.
----@return bitsy.Type type The type of field.
-function Field:getType() end
-
----Gets the value of the field.
----@return bitsy.Type | bitsy.Struct
-function Field:getValue() end
-
----Gets the size of the field.
----@return integer size The size of the field.
-function Field:getSize() end
+function Field:new(type, name) end
 
 ---Reads a value from a reader into the field value.
----@return bitsy.Field field The field instance
+---@param reader bitsy.BinaryReader The reader to read from.
+---@return bitsy.Field field The field instance.
 function Field:read(reader) end
 
----@class bitsy.Struct
+---Writes a value into a writer.
+---@param writer bitsy.BinaryWriter The writer to write into.
+---@param value any The value to write
+function Field:write(writer, value) end
+
+---@class bitsy.Struct: bitsy.DataType
 ---@field private name string The name of this struct.
----@field private fields (bitsy.Field|bitsy.Array|bitsy.Magic)[] The fields of this struct (can include Field, Array, or Magic).
----@overload fun(name: string, fields: (bitsy.Field|bitsy.Array|bitsy.Magic)[]): bitsy.Struct
+---@field private fields bitsy.DataType[] The fields of this struct (can include Field, Array, or Magic).
+---@overload fun(name: string, fields: bitsy.DataType[]): bitsy.Struct
 local Struct = {}
 
 ---Creates a new Struct
 ---@param name string The name of the struct.
----@param fields (bitsy.Field|bitsy.Array|bitsy.Magic)[] List of fields (Field, Array, or Magic)
----@return bitsy.Struct A new struct
-function Struct.new(name, fields) end
+---@param fields bitsy.DataType[] List of fields (Field, Array, or Magic)
+---@return bitsy.Struct struct A new struct
+function Struct:new(name, fields) end
 
----Gets the name for this struct.
----@return string name The name of the struct.
-function Struct:getName() end
-
----Gets the size
----@return integer size The size of the struct.
-function Struct:getSize() end
-
----Clones the struct with default (empty) values.
----@return bitsy.Struct clone The cloned struct
-function Struct:default() end
-
----Gets the type of struct.
----@return bitsy.Type type The type of struct.
-function Struct:getType() end
-
----Reads a struct using a BinaryReader.
+---Reads a struct using a reader.
 ---@param reader bitsy.BinaryReader The binary reader to use.
----@return bitsy.Struct self The read struct.
+---@return table data The read struct as a lua table.
 function Struct:read(reader) end
 
----Gets a field within the struct.
----@param fieldname string The name of the field.
----@return bitsy.Field | bitsy.Struct | bitsy.Array
-function Struct:get(fieldname) end
+---Writes a struct using a writer.
+---@param writer bitsy.BinaryWriter The writer to write into.
+---@param values table The values to write into the struct
+function Struct:write(writer, values) end
+
+---Gets the string format of this struct.
+---@return string format
+function Struct:__tostring() end
 
 ---@enum bitsy.SeekType
 local SeekType = {}
@@ -361,10 +326,10 @@ function BinaryWriter:__tostring() end
 bitsy.Array = Array
 bitsy.Field = Field
 bitsy.Magic = Magic
+bitsy.Type = Type
 bitsy.Reader = BinaryReader
 bitsy.SeekType = SeekType
 bitsy.Struct = Struct
-bitsy.Types = Types
 bitsy.Writer = BinaryWriter
 
 return bitsy

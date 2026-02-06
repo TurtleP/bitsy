@@ -74,40 +74,8 @@ function BinaryWriter:writeString(value)
     self.offset = self.offset + #value
 end
 
-local Writers = {
-    [Types.UInt8] = function(self, ...)
-        return self:writeUInt8(...)
-    end,
-    [Types.Int8] = function(self, ...)
-        return self:writeInt8(...)
-    end,
-    [Types.UInt16] = function(self, ...)
-        return self:writeUInt16(...)
-    end,
-    [Types.Int16] = function(self, ...)
-        return self:writeInt16(...)
-    end,
-    [Types.UInt32] = function(self, ...)
-        return self:writeUInt32(...)
-    end,
-    [Types.Int32] = function(self, ...)
-        return self:writeInt32(...)
-    end,
-    [Types.Float] = function(self, ...)
-        return self:writeFloat(...)
-    end,
-    [Types.Double] = function(self, ...)
-        return self:writeDouble(...)
-    end,
-    [Types.String] = function(self, value)
-        return self:writeString(value)
-    end,
-}
-
 function BinaryWriter:write(type, ...)
-    local writer = Writers[type]
-    assert(writer ~= nil, ("Writing '%s' is not supported"):format(type))
-    return writer(self, ...)
+    return type:write(self, ...)
 end
 
 return setmetatable(BinaryWriter, {
