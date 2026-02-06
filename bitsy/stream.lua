@@ -37,5 +37,9 @@ function BinaryStream:__tostring()
 end
 
 return setmetatable(BinaryStream, {
-    __call = function(_, data, offset) return BinaryStream.new(data, offset) end
+    __call = function(_, data, offset)
+        local self = setmetatable({}, BinaryStream)
+        BinaryStream.new(self, data, offset)
+        return self
+    end
 })
