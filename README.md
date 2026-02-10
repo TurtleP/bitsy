@@ -1,14 +1,14 @@
 # bitsy
 
 bitsy is a small binary serialization and deserialization library for LÖVE.
-It lets you describe binary file layouts using structured, declarative definitions—then read and write them safely and consistently.
+It lets you describe binary file layouts using structured, declarative definitions - then read and write them safely and consistently.
 
 Think of it as C-style structs, but in Lua, and without the footguns.
 
 ## Features
 
 - 📦 Declarative binary Struct, Field, and Array definitions
-- 🔢 Built-in primitive types (`uint8`, `int16`, `float`, `string`, etc.)
+- 🔢 Built-in primitive types (`uint8`, `int16`, `float`, `char`, etc.)
 - 🧱 Nested structs and fixed-size arrays
 - 🪄 Magic value validation (file headers, version checks)
 - 📖 Binary Reader and Writer built on love.Data
