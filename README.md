@@ -10,6 +10,7 @@ Think of it as C-style structs, but in Lua, and without the footguns.
 - 📦 Declarative binary Struct, Field, and Array definitions
 - 🔢 Built-in primitive types (`uint8`, `int16`, `float`, `char`, etc.)
 - 🧱 Nested structs and fixed-size arrays
+- 📝 String type for UTF-8 and UTF-16 encoded text
 - 🪄 Magic value validation (file headers, version checks)
 - 📖 Binary Reader and Writer built on love.Data
 - 🎮 Designed specifically for LÖVE
@@ -26,7 +27,7 @@ local bitsy = require("bitsy")
 
 ```lua
 local PlayerStruct = bitsy.Struct("Player", {
-    bitsy.Field("name", bitsy.Array(bitsy.Type.Char, 256)),
+    bitsy.Field("name", bitsy.String(256)),
     bitsy.Field("rank", bitsy.Type.UInt8),
     bitsy.Field("score", bitsy.Type.UInt32)
 })
@@ -67,8 +68,6 @@ To enable autocompletion, type hints, and documentation in editors like VS Code:
 
 ```json
 {
-  "workspace.library": [
-    "path/to/bitsy.d.lua"
-  ]
+    "workspace.library": ["path/to/bitsy.d.lua"]
 }
 ```

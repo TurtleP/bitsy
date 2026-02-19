@@ -79,15 +79,14 @@ function Array:__tostring() end
 ---@field private type bitsy.Array | bitsy.Type The type of the magic field.
 ---@field private name string The name of this magic field.
 ---@field private expected any The value of the magic field, for validation.
----@overload fun(name: string, type: bitsy.Type | bitsy.Array, expected: any): bitsy.Magic
+---@overload fun(name: string, type: (bitsy.Type | bitsy.Array), expected: any): bitsy.Magic
 local Magic = {}
 
 ---Creates a new magic value field.
----@param name string The name of the magic field.
 ---@param type bitsy.Array | bitsy.Type The type of the magic field.
 ---@param expected any The value of the magic field, for validation.
 ---@return bitsy.Magic magic
-function Magic:new(name, type, value) end
+function Magic:new(type, value) end
 
 ---Reads a magic value from a reader.
 ---@param reader bitsy.BinaryReader The reader to read from.
@@ -103,6 +102,30 @@ function Magic:write(writer, value) end
 ---@return string format
 function Magic:__tostring() end
 
+---Represents a string data type.
+---@class bitsy.String: bitsy.DataType
+---@field private type bitsy.Type.UInt8 | bitsy.Type.UInt16 The type of this string.
+---@field private length integer The length of this string.
+---@overload fun(type: (bitsy.Type.UInt8 | bitsy.Type.UInt16), length: integer)
+local String = {}
+
+---Creates a new String instance.
+---@param type bitsy.Type.UInt8 | bitsy.Type.UInt16 The type of this string.
+---@param length integer The length of this string.
+---@return bitsy.String The new String instance.
+function String:new(type, length) end
+
+---Reads a string from a reader.
+---@param reader bitsy.BinaryReader The reader to read from.
+---@return string value The string value.
+function String:read(reader) end
+
+---Writes a string into a writer.
+---@param writer bitsy.BinaryWriter The writer to write into.
+---@param value string | integer[] The string value(s).
+function String:write(writer, value) end
+
+--- Represents a field value in a Struct.
 ---@class bitsy.Field: bitsy.DataType
 ---@field private name string
 ---@field private type bitsy.Type
@@ -125,6 +148,7 @@ function Field:read(reader) end
 ---@param value any The value to write
 function Field:write(writer, value) end
 
+--- Represents a struct.
 ---@class bitsy.Struct: bitsy.DataType
 ---@field private name string The name of this struct.
 ---@field private fields bitsy.DataType[] The fields of this struct (can include Field, Array, or Magic).
@@ -203,13 +227,14 @@ local BinaryReader = {}
 ---Creates a new BinaryReader with data.
 ---@param data love.Data The data to read.
 ---@param offset? integer The offset to start at.
----@return bitsy.BinaryReader reader
+---@return bitsy.BinaryReader reader The new BinaryReader.
 function BinaryReader.new(data, offset) end
 
 ---Creates a new BinaryReader from a file.
 ---@param filepath string The filepath to read.
 ---@param offset? integer The offset to start at.
----@return bitsy.BinaryReader reader
+---@return bitsy.BinaryReader reader The new BinaryReader, or nil if an error occurred.
+---@return string err The error message, if any.
 function BinaryReader.open(filepath, offset) end
 
 ---Reads an unsigned 8-bit integer from the BinaryReader.
@@ -279,8 +304,8 @@ function BinaryWriter.new(size) end
 
 ---Creates a new binary writer from existing data
 ---@param data love.Data The data to use
----@return bitsy.BinaryWriter
-function BinaryWriter.from(data) end
+---@param offset? integer The offset to start writing from
+function BinaryWriter.from(data, offset) end
 
 ---Write unsigned 8-bit integers into the data.
 ---@param ... integer The integers to write into the data.
@@ -330,6 +355,7 @@ function BinaryWriter:__tostring() end
 bitsy.Array = Array
 bitsy.Field = Field
 bitsy.Magic = Magic
+bitsy.String = String
 bitsy.Type = Type
 bitsy.Reader = BinaryReader
 bitsy.SeekType = SeekType

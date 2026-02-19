@@ -8,14 +8,15 @@ BinaryWriter.__index       = BinaryWriter
 BinaryWriter.__tostring    = Stream.__tostring
 
 function BinaryWriter.new(size)
-    Stream.new(BinaryWriter, love.data.newByteData(size), 0)
-    return setmetatable({}, BinaryWriter)
+    local data = love.data.newByteData(size)
+    return BinaryWriter.from(data)
 end
 
-function BinaryWriter.from(data)
+function BinaryWriter.from(data, offset)
+    local self = setmetatable({}, BinaryWriter)
     data = type(data) == "string" and love.data.newByteData(data) or data
-    Stream.new(BinaryWriter, data, 0)
-    return setmetatable({}, BinaryWriter)
+    Stream.new(self, data, offset)
+    return self
 end
 
 function BinaryWriter:writeUInt8(...)

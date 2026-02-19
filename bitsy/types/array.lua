@@ -1,5 +1,4 @@
-local path = (...):gsub("array", "")
-local DataType = require(path .. "datatype")
+local DataType = require("bitsy.core.datatype")
 
 local Array = {}
 Array.__index = Array
@@ -23,12 +22,6 @@ end
 
 function Array:write(writer, ...)
     local length = select("#", ...)
-    local value = ...
-    if type(value) == "string" then
-        -- expand with zeroes
-        local s = value .. string.rep("\0", (self.type:getSize() * self.count) - #value)
-        return writer:write(self.type, s)
-    end
     assert(length == self.count, INVALID_ARRAY_WRITE_COUNT:format(self.count, length))
     writer:write(self.type, ...)
 end

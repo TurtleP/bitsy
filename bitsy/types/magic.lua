@@ -1,5 +1,4 @@
-local path = (...):gsub("magic", "")
-local DataType = require(path .. "datatype")
+local DataType = require("bitsy.core.datatype")
 
 local Magic = {}
 Magic.__index = Magic
@@ -7,9 +6,9 @@ Magic.__index = Magic
 local INVALID_ARRAY_ELEMENT = "Expected element %d to be %s, got %s"
 local INVALID_MAGIC_VALUE = "Expected %s, got %s"
 
-function Magic:new(name, type, expected)
+function Magic:new(type, expected)
     assert(expected ~= nil, "Expected value cannot be nil")
-    local instance = DataType.new(self, name, type:getSize())
+    local instance = DataType.new(self, nil, 0)
     instance.type = type
     instance.expected = expected
     return instance
@@ -29,13 +28,13 @@ end
 
 function Magic:write(writer, value)
     if type(value) == "table" then
-        return writer:write(self.type, unpack(value))
+        return self.type:write(writer, unpack(value))
     end
-    writer:write(self.type, value)
+    self.type:write(writer, value)
 end
 
 function Magic:__tostring()
-    return ("<Magic %s: %s>"):format(self.name, self.type)
+    return ("<Magic: %s>"):format(self.type)
 end
 
 return setmetatable(Magic, {

@@ -1,5 +1,4 @@
-local path = (...):gsub("struct", "")
-local DataType = require(path .. "datatype")
+local DataType = require("bitsy.core.datatype")
 
 local Struct = {}
 Struct.__index = function(self, key)

@@ -12,9 +12,9 @@ function BinaryReader.new(data, offset)
 end
 
 function BinaryReader.open(filename, offset)
-    local self = setmetatable({}, BinaryReader)
-    Stream.new(self, love.filesystem.newFileData(filename), offset)
-    return self
+    local data, err = love.filesystem.newFileData(filename)
+    if not data then return nil, err end
+    return BinaryReader.new(data, offset)
 end
 
 function BinaryReader:readUInt8(count)

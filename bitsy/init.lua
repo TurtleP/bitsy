@@ -11,21 +11,35 @@ assert(success, "bitsy requires LÖVE")
 success = love._version_major >= 12
 assert(success, "LÖVE version 12 or higher required")
 
-local path = (...)
+local PATH = (...):gsub("[^%.]+$", "")
 
--- Imports a lua file, relative to this file's path
--- https://github.com/1bardesign/batteries/blob/master/init.lua#L7-L10
-local function import(filepath)
-    return require(table.concat({ path, filepath }, "."))
+local function import(module)
+    return require(PATH .. module)
 end
 
-bitsy.SeekType = import("seek")
-bitsy.Type     = import("types")
-bitsy.Reader   = import("reader")
-bitsy.Writer   = import("writer")
-bitsy.Struct   = import("struct")
-bitsy.Magic    = import("magic")
-bitsy.Field    = import("field")
-bitsy.Array    = import("array")
+local paths = love.filesystem.getRequirePath()
 
-return bitsy
+local function load()
+    love.filesystem.setRequirePath(paths .. (";%s/?.lua"):format(PATH))
+
+    local Stream = import("bitsy.stream")
+    for stream_name, value in pairs(Stream) do
+        bitsy[stream_name] = value
+    end
+
+    local Types = import("bitsy.types")
+    for type_name, value in pairs(Types) do
+        bitsy[type_name] = value
+    end
+
+    local Core = import("bitsy.core")
+    for core_name, value in pairs(Core) do
+        bitsy[core_name] = value
+    end
+
+    love.filesystem.setRequirePath(paths)
+
+    return bitsy
+end
+
+return load()

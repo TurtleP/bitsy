@@ -1,5 +1,4 @@
-local path = (...):gsub("field", "")
-local DataType = require(path .. "datatype")
+local DataType = require("bitsy.core.datatype")
 
 local Field = {}
 Field.__index = Field

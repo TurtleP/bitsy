@@ -1,5 +1,4 @@
-local path = (...):gsub("stream", "")
-local SeekType = require(path .. "seek")
+local SeekType = require("bitsy.core.seek")
 
 local BinaryStream = {}
 BinaryStream.__index = BinaryStream

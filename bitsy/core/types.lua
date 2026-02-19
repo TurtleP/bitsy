@@ -1,5 +1,4 @@
-local path = (...):gsub("types", "")
-local DataType = require(path .. "datatype")
+local DataType = require("bitsy.core.datatype")
 
 local Type = {}
 Type.UInt8 = DataType("uint8_t", 1,
