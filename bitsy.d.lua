@@ -161,6 +161,7 @@ SeekType.SEEK_END = 2 -- Seek relative to the end of the stream.
 ---@class bitsy.BinaryStream
 ---@field protected data love.Data
 ---@field protected offset integer
+---@field private advance function
 ---@overload fun(data: love.Data, offset?: integer): bitsy.BinaryStream
 local BinaryStream = {}
 
@@ -179,13 +180,16 @@ function BinaryStream:getData() end
 function BinaryStream:getSize() end
 
 ---Gets the offset of the data associated with this stream.
----@return integer size
-function BinaryStream:getOffset() end
+---@return integer offset
+function BinaryStream:tell() end
 
 ---Seeks to the offset within the data associated with this stream.
 ---@param offset integer The offset to seek to.
 ---@param whence bitsy.SeekType The position to seek to.
 function BinaryStream:seek(offset, whence) end
+
+---Rewinds the stream to the beginning.
+function BinaryStream:rewind() end
 
 ---Gets the string representation of this Stream.
 ---@return string value The string representation of the Stream.

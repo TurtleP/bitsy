@@ -4,6 +4,9 @@ local DataType = require(path .. "datatype")
 local Magic = {}
 Magic.__index = Magic
 
+local INVALID_ARRAY_ELEMENT = "Expected element %d to be %s, got %s"
+local INVALID_MAGIC_VALUE = "Expected %s, got %s"
+
 function Magic:new(name, type, expected)
     assert(expected ~= nil, "Expected value cannot be nil")
     local instance = DataType.new(self, name, type:getSize())
@@ -16,11 +19,10 @@ function Magic:read(reader)
     local value = reader:read(self.type, self:getSize())
     if type(value) == "table" and type(self.expected) == "table" then
         for i = 1, #self.expected do
-            assert(value[i] == self.expected[i],
-                ("Expected element %d to be %s, got %s"):format(i, self.expected[i], value[i]))
+            assert(value[i] == self.expected[i], INVALID_ARRAY_ELEMENT:format(i, self.expected[i], value[i]))
         end
     else
-        assert(value == self.expected, ("Expected %s, got %s"):format(self.expected, value))
+        assert(value == self.expected, INVALID_MAGIC_VALUE:format(self.expected, value))
     end
     return value
 end

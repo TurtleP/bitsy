@@ -4,8 +4,11 @@ local DataType = require(path .. "datatype")
 local Array = {}
 Array.__index = Array
 
+local ARRAY_REQUIRES_DATATYPE = "Array requires a DataType."
+local INVALID_ARRAY_WRITE_COUNT = "Array write requires exactly %d values, got %d."
+
 function Array:new(type, count)
-    assert(type and getmetatable(type) == DataType, "Array requires a DataType.")
+    assert(type and getmetatable(type) == DataType, ARRAY_REQUIRES_DATATYPE)
     count = count or 1
     local size = type:getSize() * count
     local instance = DataType.new(self, tostring(type), size)
@@ -26,7 +29,7 @@ function Array:write(writer, ...)
         local s = value .. string.rep("\0", (self.type:getSize() * self.count) - #value)
         return writer:write(self.type, s)
     end
-    assert(length == self.count, ("Array write requires exactly %d values, got %d."):format(self.count, length))
+    assert(length == self.count, INVALID_ARRAY_WRITE_COUNT:format(self.count, length))
     writer:write(self.type, ...)
 end
 

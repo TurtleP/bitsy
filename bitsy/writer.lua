@@ -1,10 +1,11 @@
-local path = (...):gsub("writer", "")
-local Stream = require(path .. "stream")
+local path                 = (...):gsub("writer", "")
+local Stream               = require(path .. "stream")
 
+local VALUE_MUST_BE_STRING = "Value must be a string"
 
-local BinaryWriter      = {}
-BinaryWriter.__index    = BinaryWriter
-BinaryWriter.__tostring = Stream.__tostring
+local BinaryWriter         = {}
+BinaryWriter.__index       = BinaryWriter
+BinaryWriter.__tostring    = Stream.__tostring
 
 function BinaryWriter.new(size)
     Stream.new(BinaryWriter, love.data.newByteData(size), 0)
@@ -66,7 +67,7 @@ function BinaryWriter:writeDouble(...)
 end
 
 function BinaryWriter:writeString(value)
-    assert(type(value) == "string", "value must be a string")
+    assert(type(value) == "string", VALUE_MUST_BE_STRING)
     self.data:setString(value, self.offset)
     self.offset = self.offset + #value
 end

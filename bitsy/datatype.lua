@@ -1,14 +1,17 @@
 local DataType = {}
 DataType.__index = DataType
 
+local READ_NOT_IMPLEMENTED = "Read not implemented for %s"
+local WRITE_NOT_IMPLEMENTED = "Write not implemented for %s"
+
 function DataType:new(name, size, read_fn, write_fn)
     local instance = setmetatable({}, self)
     instance.name = name
     instance.size = size or 0
-    if type(read_fn) == "function" and read_fn then
+    if type(read_fn) == "function" then
         instance._read = read_fn
     end
-    if type(write_fn) == "function" and write_fn then
+    if type(write_fn) == "function" then
         instance._write = write_fn
     end
     return instance
@@ -24,16 +27,21 @@ end
 
 function DataType:read(reader, count)
     if self._read then
-        return self._read(reader, count)
+        local count = count or 1
+        local value = self._read(reader, count)
+        reader:advance(count * self.size)
+        return value
     end
-    error(("Read not implemented for %s"):format(self.name))
+    error(READ_NOT_IMPLEMENTED:format(self.name))
 end
 
 function DataType:write(writer, ...)
     if self._write then
-        return self._write(writer, ...)
+        local count = select("#", ...)
+        self._write(writer, ...)
+        writer:advance(count * self.size)
     end
-    error(("Write not implemented for %s"):format(self.name))
+    error(WRITE_NOT_IMPLEMENTED:format(self.name))
 end
 
 function DataType:__tostring()

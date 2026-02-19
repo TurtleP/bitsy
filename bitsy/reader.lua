@@ -1,5 +1,5 @@
-local path   = (...):gsub("reader", "")
-local Stream = require(path .. "stream")
+local path              = (...):gsub("reader", "")
+local Stream            = require(path .. "stream")
 
 local BinaryReader      = {}
 BinaryReader.__index    = BinaryReader
@@ -20,64 +20,54 @@ end
 function BinaryReader:readUInt8(count)
     count = count or 1
     local bytes = { self.data:getUInt8(self.offset, count) }
-    self.offset = self.offset + count
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readInt8(count)
     count = count or 1
     local bytes = { self.data:getInt8(self.offset, count) }
-    self.offset = self.offset + count
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readUInt16(count)
     count = count or 1
     local bytes = { self.data:getUInt16(self.offset, count) }
-    self.offset = self.offset + (2 * count)
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readInt16(count)
     count = count or 1
     local bytes = { self.data:getInt16(self.offset, count) }
-    self.offset = self.offset + (2 * count)
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readUInt32(count)
     count = count or 1
     local bytes = { self.data:getUInt32(self.offset, count) }
-    self.offset = self.offset + (4 * count)
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readInt32(count)
     count = count or 1
     local bytes = { self.data:getInt32(self.offset, count) }
-    self.offset = self.offset + (4 * count)
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readFloat(count)
     count = count or 1
     local bytes = { self.data:getFloat(self.offset, count) }
-    self.offset = self.offset + (4 * count)
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readDouble(count)
     count = count or 1
     local bytes = { self.data:getDouble(self.offset, count) }
-    self.offset = self.offset + (8 * count)
     return #bytes == 1 and bytes[1] or bytes
 end
 
 function BinaryReader:readString(length)
     length = length or 1
-    local s = self.data:getString(self.offset, length)
-    self.offset = self.offset + length
-    return s
+    return self.data:getString(self.offset, length)
 end
 
 function BinaryReader:read(type, count)

@@ -4,7 +4,6 @@ local SeekType = require(path .. "seek")
 local BinaryStream = {}
 BinaryStream.__index = BinaryStream
 
-
 function BinaryStream:new(data, offset)
     self.data = data
     self.offset = offset or 0
@@ -18,7 +17,7 @@ function BinaryStream:getSize()
     return self.data:getSize()
 end
 
-function BinaryStream:getOffset()
+function BinaryStream:tell()
     return self.offset
 end
 
@@ -31,6 +30,14 @@ function BinaryStream:seek(offset, whence)
         self.offset = self:getSize() + offset
     end
     self.offset = math.max(0, math.min(self.offset, self:getSize()))
+end
+
+function BinaryStream:rewind()
+    self.offset = 0
+end
+
+function BinaryStream:advance(count)
+    self.offset = self.offset + count
 end
 
 function BinaryStream:__tostring()
