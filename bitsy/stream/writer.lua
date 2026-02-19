@@ -20,57 +20,40 @@ function BinaryWriter.from(data, offset)
 end
 
 function BinaryWriter:writeUInt8(...)
-    local count = select("#", ...)
     self.data:setUInt8(self.offset, ...)
-    self.offset = self.offset + count
 end
 
 function BinaryWriter:writeInt8(...)
-    local count = select("#", ...)
     self.data:setUInt8(self.offset, ...)
-    self.offset = self.offset + count
 end
 
 function BinaryWriter:writeUInt16(...)
-    local count = select("#", ...)
     self.data:setUInt16(self.offset, ...)
-    self.offset = self.offset + (2 * count)
 end
 
 function BinaryWriter:writeInt16(...)
-    local count = select("#", ...)
     self.data:setInt16(self.offset, ...)
-    self.offset = self.offset + (2 * count)
 end
 
 function BinaryWriter:writeUInt32(...)
-    local count = select("#", ...)
     self.data:setUInt32(self.offset, ...)
-    self.offset = self.offset + (4 * count)
 end
 
 function BinaryWriter:writeInt32(...)
-    local count = select("#", ...)
     self.data:setInt32(self.offset, ...)
-    self.offset = self.offset + (4 * count)
 end
 
 function BinaryWriter:writeFloat(...)
-    local count = select("#", ...)
     self.data:setFloat(self.offset, ...)
-    self.offset = self.offset + (4 * count)
 end
 
 function BinaryWriter:writeDouble(...)
-    local count = select("#", ...)
     self.data:setDouble(self.offset, ...)
-    self.offset = self.offset + (8 * count)
 end
 
 function BinaryWriter:writeString(value)
     assert(type(value) == "string", VALUE_MUST_BE_STRING)
     self.data:setString(value, self.offset)
-    self.offset = self.offset + #value
 end
 
 function BinaryWriter:write(type, ...)

@@ -8,12 +8,8 @@ String.__index = String
 
 local INVALID_STRING_BASE_TYPE = "String base type must be UInt8 or UInt16"
 
-local function is_valid_type(type)
-    return type == types.UInt8 or type == types.UInt16
-end
-
 function String:new(type, length)
-    assert(is_valid_type(type), INVALID_STRING_BASE_TYPE)
+    assert(type == types.UInt8 or type == types.UInt16, INVALID_STRING_BASE_TYPE)
     length = length or 1
     local self = DataType.new(self, tostring(type), length * type:getSize())
     self.type = type
