@@ -1,8 +1,9 @@
+local path = (...):gsub("stream", "")
+local SeekType = require(path .. "seek")
+
 local BinaryStream = {}
 BinaryStream.__index = BinaryStream
 
-local path = (...):gsub("stream", "")
-local SeekType = require(path .. "seek")
 
 function BinaryStream:new(data, offset)
     self.data = data
@@ -22,7 +23,6 @@ function BinaryStream:getOffset()
 end
 
 function BinaryStream:seek(offset, whence)
-    assert(offset >= 0, "negative seek")
     if whence == SeekType.SEEK_CUR then
         self.offset = self.offset + offset
     elseif whence == SeekType.SEEK_SET then

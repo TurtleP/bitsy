@@ -1,6 +1,5 @@
 local path = (...):gsub("array", "")
 local DataType = require(path .. "datatype")
-local Types = require(path .. "types")
 
 local Array = {}
 Array.__index = Array

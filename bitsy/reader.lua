@@ -1,9 +1,5 @@
-local path = (...):gsub("reader", "")
-
+local path   = (...):gsub("reader", "")
 local Stream = require(path .. "stream")
-local Types = require(path .. "types")
-local utf8 = require("utf8")
-
 
 local BinaryReader      = {}
 BinaryReader.__index    = BinaryReader
@@ -96,6 +92,6 @@ function BinaryReader:peek(type, count)
 end
 
 return setmetatable(BinaryReader, {
-    __call = function (_, data) return BinaryReader.new(data) end,
+    __call = function(_, data) return BinaryReader.new(data) end,
     __index = Stream
 })

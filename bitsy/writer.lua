@@ -1,8 +1,5 @@
 local path = (...):gsub("writer", "")
-
 local Stream = require(path .. "stream")
-local SeekType = require(path .. "seek")
-local Types = require(path .. "types")
 
 
 local BinaryWriter      = {}

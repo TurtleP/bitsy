@@ -36,8 +36,6 @@ function Struct:read(reader)
     return data
 end
 
-local log = require("log")
-
 function Struct:write(writer, values)
     for index, field in ipairs(self.fields) do
         if not values[index] then break end
