@@ -79,7 +79,7 @@ function Array:__tostring() end
 ---@field private type bitsy.Array | bitsy.Type The type of the magic field.
 ---@field private name string The name of this magic field.
 ---@field private expected any The value of the magic field, for validation.
----@overload fun(name: string, type: (bitsy.Type | bitsy.Array), expected: any): bitsy.Magic
+---@overload fun(type: (bitsy.Type | bitsy.Array | bitsy.String), expected: any): bitsy.Magic
 local Magic = {}
 
 ---Creates a new magic value field.
@@ -104,13 +104,13 @@ function Magic:__tostring() end
 
 ---Represents a string data type.
 ---@class bitsy.String: bitsy.DataType
----@field private type bitsy.Type.UInt8 | bitsy.Type.UInt16 The type of this string.
+---@field private type bitsy.Type The type of this string.
 ---@field private length integer The length of this string.
----@overload fun(type: (bitsy.Type.UInt8 | bitsy.Type.UInt16), length: integer)
+---@overload fun(type: bitsy.Type, length: integer): bitsy.String
 local String = {}
 
 ---Creates a new String instance.
----@param type bitsy.Type.UInt8 | bitsy.Type.UInt16 The type of this string.
+---@param type bitsy.Type The type of this string.
 ---@param length integer The length of this string.
 ---@return bitsy.String The new String instance.
 function String:new(type, length) end
@@ -129,12 +129,12 @@ function String:write(writer, value) end
 ---@class bitsy.Field: bitsy.DataType
 ---@field private name string
 ---@field private type bitsy.Type
----@overload fun(name: string, type: bitsy.Type): bitsy.Field
+---@overload fun(name: string, type: (bitsy.Type | bitsy.Array | bitsy.Magic | bitsy.Struct)): bitsy.Field
 local Field = {}
 
 ---Creates a new Field
 ---@param name string The name of this field.
----@param type bitsy.Type The type for this field.
+---@param type bitsy.Type | bitsy.Array | bitsy.Magic | bitsy.Struct The type for this field.
 ---@return bitsy.Field field
 function Field:new(type, name) end
 
