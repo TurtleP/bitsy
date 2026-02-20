@@ -82,6 +82,6 @@ function BinaryReader:peek(type, count)
 end
 
 return setmetatable(BinaryReader, {
-    __call = function(_, data) return BinaryReader.new(data) end,
+    __call = function(_, data, offset) return BinaryReader.new(data, offset) end,
     __index = Stream
 })

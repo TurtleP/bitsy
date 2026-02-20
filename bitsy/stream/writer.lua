@@ -61,8 +61,6 @@ function BinaryWriter:write(type, ...)
 end
 
 return setmetatable(BinaryWriter, {
-    __call = function(_, size)
-        return BinaryWriter.new(size)
-    end,
+    __call = function(_, size) return BinaryWriter.new(size) end,
     __index = Stream
 })
