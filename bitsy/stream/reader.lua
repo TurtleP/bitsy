@@ -1,5 +1,4 @@
-local path              = (...):gsub("reader", "")
-local Stream            = require(path .. "stream")
+local Stream            = require("bitsy.stream.stream")
 
 local BinaryReader      = {}
 BinaryReader.__index    = BinaryReader

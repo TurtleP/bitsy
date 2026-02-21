@@ -1,15 +1,20 @@
 local DataType = require("bitsy.core.datatype")
 local types = require("bitsy.core.types")
 
+local Writer = require("bitsy.stream.writer")
 local utf8 = require("utf8")
 
 local String = {}
 String.__index = String
 
-local INVALID_STRING_BASE_TYPE = "String base type must be UInt8 or UInt16"
+local INVALID_STRING_BASE_TYPE = "String base type must be uint8_t, uint16_t, or uint32_t, got %s"
+
+local function validate_type(type)
+    return type == types.UInt8 or type == types.UInt16 or type == types.UInt32
+end
 
 function String:new(type, length)
-    assert(type == types.UInt8 or type == types.UInt16, INVALID_STRING_BASE_TYPE)
+    assert(validate_type(type), INVALID_STRING_BASE_TYPE:format(type))
     length = length or 1
     local self = DataType.new(self, tostring(type), length * type:getSize())
     self.type = type
@@ -17,18 +22,31 @@ function String:new(type, length)
     return self
 end
 
+local function get_codepoints(value)
+    local codepoints = {}
+    for _, codepoint in utf8.codes(value) do
+        table.insert(codepoints, codepoint)
+    end
+    return codepoints
+end
+
 function String:read(reader)
     local value = self.type:read(reader, self.length)
     if type(value) == "table" then
-        return utf8.char(unpack(value))
+        local characters = {}
+        for index = 1, #value do
+            table.insert(characters, utf8.char(value[index]))
+        end
+        return table.concat(characters)
     end
     return utf8.char(value)
 end
 
 function String:write(writer, ...)
-    local count, value = select("#", ...), { ... }
-    if count == 1 and type(value[1]) == "string" then
-        return writer:writeString(value[1])
+    local first = select(1, ...)
+    if type(first) == "string" then
+        local codepoints = get_codepoints(first)
+        return writer:write(self.type, codepoints)
     end
     writer:write(self.type, ...)
 end

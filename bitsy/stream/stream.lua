@@ -43,6 +43,4 @@ function BinaryStream:__tostring()
     return self.data:getString()
 end
 
-return setmetatable(BinaryStream, {
-    __call = function(_, data, offset) return BinaryStream.new(data, offset) end
-})
+return BinaryStream

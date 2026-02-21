@@ -1,5 +1,5 @@
-local path                 = (...):gsub("writer", "")
-local Stream               = require(path .. "stream")
+local Stream = require("bitsy.stream.stream")
+
 
 local VALUE_MUST_BE_STRING = "Value must be a string"
 
@@ -9,7 +9,7 @@ BinaryWriter.__tostring    = Stream.__tostring
 
 function BinaryWriter.new(size)
     local data = love.data.newByteData(size)
-    return BinaryWriter.from(data)
+    return BinaryWriter.from(data, 0)
 end
 
 function BinaryWriter.from(data, offset)

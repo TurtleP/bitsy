@@ -40,6 +40,7 @@ function DataType:write(writer, ...)
         local count = select("#", ...)
         self._write(writer, ...)
         writer:advance(count * self.size)
+        return count
     end
     error(WRITE_NOT_IMPLEMENTED:format(self.name))
 end
