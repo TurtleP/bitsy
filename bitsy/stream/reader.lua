@@ -70,6 +70,13 @@ function BinaryReader:readString(length)
 end
 
 function BinaryReader:read(type, count)
+    if not type then
+        local size = self:getSize() - self.offset
+        local offset = self.offset
+        self:advance(size)
+        return love.data.newDataView(self.data, offset, size)
+    end
+    count = count or 1
     return type:read(self, count)
 end
 

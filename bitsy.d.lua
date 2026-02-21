@@ -315,6 +315,12 @@ function BinaryReader:readU16String(length) end
 ---@return bitsy.Struct | bitsy.Struct[] structs The values read from the BinaryReader.
 function BinaryReader:readStruct(count, struct) end
 
+---Reads a type `count` times.
+--@param type? bitsy.Type The type to be read.
+--@param count? integer The number of `type` to read.
+--@return integer | integer[] | love.DataView
+function BinaryReader:read(type, count) end
+
 ---Represents a binary stream writer
 ---@class bitsy.BinaryWriter: bitsy.BinaryStream
 ---@overload fun(size: integer): bitsy.BinaryWriter
@@ -368,7 +374,7 @@ function BinaryWriter:writeString(value) end
 
 ---Writes values into the data.
 ---@param type bitsy.Type The type of data
----@param ... integer | number| string The data to write
+---@param ... integer | number | string The data to write
 function BinaryWriter:write(type, ...) end
 
 ---Returns the underlying data as a string
