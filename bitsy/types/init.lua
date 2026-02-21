@@ -3,5 +3,6 @@ return {
     Field = require("bitsy.types.field"),
     Struct = require("bitsy.types.struct"),
     Magic = require("bitsy.types.magic"),
-    String = require("bitsy.types.string")
+    String = require("bitsy.types.string"),
+    Padding = require("bitsy.types.padding")
 }

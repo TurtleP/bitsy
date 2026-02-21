@@ -102,6 +102,28 @@ function Magic:write(writer, value) end
 ---@return string format
 function Magic:__tostring() end
 
+---Represents padding.
+---Padding is always treated as UInt8.
+---@class bitsy.Padding
+---@field private length integer
+---@overload fun(length: integer): bitsy.Padding
+local Padding = {}
+
+---Creates a new Padding data type.
+---@param length integer The length of the padding.
+---@return bitsy.Padding padding The padding to insert.
+function Padding.new(length) end
+
+---Reads the padding into a Reader.
+---@param reader bitsy.BinaryReader
+---@return integer | integer[] values The integer value(s).
+function Padding:read(reader) end
+
+---Writes padding into a Writer.
+---This always writes `length` UInt8s whose value is zero.
+---@param writer bitsy.BinaryWriter
+function Padding:write(writer) end
+
 ---Represents a string data type.
 ---@class bitsy.String: bitsy.DataType
 ---@field private type bitsy.Type The type of this string.
@@ -148,7 +170,7 @@ function Field:read(reader) end
 ---@param value any The value to write
 function Field:write(writer, value) end
 
---- Represents a struct.
+---Represents a struct.
 ---@class bitsy.Struct: bitsy.DataType
 ---@field private name string The name of this struct.
 ---@field private fields bitsy.DataType[] The fields of this struct (can include Field, Array, or Magic).
