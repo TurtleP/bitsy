@@ -175,11 +175,11 @@ function Struct:write(writer, values) end
 ---@return string format
 function Struct:__tostring() end
 
----@enum bitsy.SeekType
-local SeekType = {}
-SeekType.SEEK_CUR = 0 -- Seek from the current position in the stream.
-SeekType.SEEK_SET = 1 -- Seek to the absolute position in the stream.
-SeekType.SEEK_END = 2 -- Seek relative to the end of the stream.
+---@enum bitsy.Seek
+local Seek = {}
+Seek.SEEK_CUR = 0 -- Seek from the current position in the stream.
+Seek.SEEK_SET = 1 -- Seek to the absolute position in the stream.
+Seek.SEEK_END = 2 -- Seek relative to the end of the stream.
 
 ---Represents a binary stream
 ---@class bitsy.BinaryStream

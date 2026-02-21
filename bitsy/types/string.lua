@@ -9,12 +9,14 @@ String.__index = String
 
 local INVALID_STRING_BASE_TYPE = "String base type must be uint8_t, uint16_t, or uint32_t, got %s"
 
-local function validate_type(type)
-    return type == types.UInt8 or type == types.UInt16 or type == types.UInt32
-end
+String.ValidTypes = {
+    [types.UInt8] = true,
+    [types.UInt16] = true,
+    [types.UInt32] = true
+}
 
 function String:new(type, length)
-    assert(validate_type(type), INVALID_STRING_BASE_TYPE:format(type))
+    assert(String.ValidTypes[type], INVALID_STRING_BASE_TYPE:format(type))
     length = length or 1
     local self = DataType.new(self, tostring(type), length * type:getSize())
     self.type = type
@@ -52,7 +54,7 @@ function String:write(writer, ...)
 end
 
 function String:__tostring()
-    return ("<String %d>"):format(self.length)
+    return ("<String[%d]>"):format(self.length)
 end
 
 return setmetatable(String, {

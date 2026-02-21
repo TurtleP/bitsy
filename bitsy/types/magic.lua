@@ -8,7 +8,7 @@ local INVALID_MAGIC_VALUE = "Expected %s, got %s"
 
 function Magic:new(type, expected)
     assert(expected ~= nil, "Expected value cannot be nil")
-    local instance = DataType.new(self, nil, 0)
+    local instance = DataType.new(self, nil, type:getSize())
     instance.type = type
     instance.expected = expected
     return instance
@@ -34,7 +34,7 @@ function Magic:write(writer, value)
 end
 
 function Magic:__tostring()
-    return ("<Magic: %s>"):format(self.type)
+    return ("<Magic %s>"):format(self.expected)
 end
 
 return setmetatable(Magic, {

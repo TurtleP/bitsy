@@ -45,6 +45,19 @@ function DataType:write(writer, ...)
     error(WRITE_NOT_IMPLEMENTED:format(self.name))
 end
 
+function DataType.isSubtype(object, base)
+    base = base or DataType
+    local mt = getmetatable(object)
+    while mt do
+        local index = mt.__index
+        if index == base then
+            return true
+        end
+        mt = getmetatable(index)
+    end
+    return false
+end
+
 function DataType:__tostring()
     return self.name
 end

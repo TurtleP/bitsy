@@ -1,15 +1,7 @@
 local DataType = require("bitsy.core.datatype")
 
 local Struct = {}
-Struct.__index = function(self, key)
-    if Struct[key] then
-        return Struct[key]
-    end
-    if self.members[key] then
-        return self.members[key]
-    end
-    return DataType.__index(self, key)
-end
+Struct.__index = Struct
 
 function Struct:new(name, fields)
     local size, members = 0, {}
@@ -24,15 +16,23 @@ function Struct:new(name, fields)
 end
 
 function Struct:__tostring()
-    return ("<Struct %s: 0x%X>"):format(self.name, self.size)
+    return ("<Struct %s [0x%X]>"):format(self.name, self.size)
+end
+
+local StructInstance = {}
+StructInstance.__index = StructInstance
+
+function StructInstance:__tostring()
+    return tostring(self.__schema)
 end
 
 function Struct:read(reader)
-    local data = {}
+    local instance = setmetatable({}, StructInstance)
+    instance.__schema = self
     for _, field in ipairs(self.fields) do
-        data[field:getName()] = field:read(reader)
+        instance[field.name] = field:read(reader)
     end
-    return data
+    return instance
 end
 
 function Struct:write(writer, values)
