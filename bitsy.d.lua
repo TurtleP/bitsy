@@ -47,15 +47,14 @@ function DataType:write(writer, ...) end
 ---@field Char bitsy.DataType char
 local Type = {}
 
----A contiguous data field
 ---@class bitsy.Array: bitsy.DataType
----@field private type bitsy.Type
+---@field private type bitsy.DataType
 ---@field private count integer
----@overload fun(type: bitsy.Type, count: integer): bitsy.Array
+---@overload fun(type: bitsy.DataType, count: integer): bitsy.Array
 local Array = {}
 
 ---Creates a new array.
----@param type bitsy.Type The type of array.
+---@param type bitsy.DataType The type of array.
 ---@param count integer The number of items in the array.
 ---@return bitsy.Array array
 function Array:new(type, count) end
@@ -76,7 +75,7 @@ function Array:__tostring() end
 
 ---A magic value field for validation
 ---@class bitsy.Magic: bitsy.DataType
----@field private type bitsy.Array | bitsy.Type The type of the magic field.
+---@field private type bitsy.Array | bitsy.Type | bitsy.String The type of the magic field.
 ---@field private name string The name of this magic field.
 ---@field private expected any The value of the magic field, for validation.
 ---@overload fun(type: (bitsy.Type | bitsy.Array | bitsy.String), expected: any): bitsy.Magic
@@ -104,7 +103,7 @@ function Magic:__tostring() end
 
 ---Represents padding.
 ---Padding is always treated as UInt8.
----@class bitsy.Padding
+---@class bitsy.Padding: bitsy.DataType
 ---@field private length integer
 ---@overload fun(length: integer): bitsy.Padding
 local Padding = {}
@@ -124,15 +123,17 @@ function Padding:read(reader) end
 ---@param writer bitsy.BinaryWriter
 function Padding:write(writer) end
 
+---@alias bitsy.StringType `bitsy.UInt8` | `bitsy.UInt16` | `bitsy.UInt32`
+
 ---Represents a string data type.
 ---@class bitsy.String: bitsy.DataType
----@field private type bitsy.Type The type of this string.
+---@field private type bitsy.StringType The type of this string.
 ---@field private length integer The length of this string.
----@overload fun(type: bitsy.Type, length: integer): bitsy.String
+---@overload fun(type: bitsy.StringType, length: integer): bitsy.String
 local String = {}
 
 ---Creates a new String instance.
----@param type bitsy.Type The type of this string.
+---@param type bitsy.StringType The type of this string.
 ---@param length integer The length of this string.
 ---@return bitsy.String The new String instance.
 function String:new(type, length) end
@@ -150,15 +151,15 @@ function String:write(writer, value) end
 --- Represents a field value in a Struct.
 ---@class bitsy.Field: bitsy.DataType
 ---@field private name string
----@field private type bitsy.Type
----@overload fun(name: string, type: (bitsy.Type | bitsy.Array | bitsy.Magic | bitsy.Struct)): bitsy.Field
+---@field private type bitsy.DataType
+---@overload fun(name: string, type: bitsy.DataType): bitsy.Field
 local Field = {}
 
 ---Creates a new Field
 ---@param name string The name of this field.
----@param type bitsy.Type | bitsy.Array | bitsy.Magic | bitsy.Struct The type for this field.
+---@param type bitsy.DataType The type for this field.
 ---@return bitsy.Field field
-function Field:new(type, name) end
+function Field:new( name,type) end
 
 ---Reads a value from a reader into the field value.
 ---@param reader bitsy.BinaryReader The reader to read from.
@@ -231,7 +232,7 @@ function BinaryStream:tell() end
 
 ---Seeks to the offset within the data associated with this stream.
 ---@param offset integer The offset to seek to.
----@param whence bitsy.SeekType The position to seek to.
+---@param whence bitsy.Seek The position to seek to.
 function BinaryStream:seek(offset, whence) end
 
 ---Rewinds the stream to the beginning.
@@ -255,8 +256,8 @@ function BinaryReader.new(data, offset) end
 ---Creates a new BinaryReader from a file.
 ---@param filepath string The filepath to read.
 ---@param offset? integer The offset to start at.
----@return bitsy.BinaryReader reader The new BinaryReader, or nil if an error occurred.
----@return string err The error message, if any.
+---@return bitsy.BinaryReader | nil reader The new BinaryReader, or nil if an error occurred.
+---@return string | nil err The error message, if any.
 function BinaryReader.open(filepath, offset) end
 
 ---Reads an unsigned 8-bit integer from the BinaryReader.
@@ -380,8 +381,9 @@ bitsy.Magic = Magic
 bitsy.String = String
 bitsy.Type = Type
 bitsy.Reader = BinaryReader
-bitsy.SeekType = SeekType
+bitsy.Seek = Seek
 bitsy.Struct = Struct
 bitsy.Writer = BinaryWriter
+bitsy.Padding = Padding
 
 return bitsy
